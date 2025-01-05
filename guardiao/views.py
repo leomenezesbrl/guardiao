@@ -116,6 +116,7 @@ def emprestimos_view(request):
                             )
                             raise ValueError(
                                 "Material com registro único já emprestado.")
+
                         material.quantidade_disponivel = 0
 
                     # Validação para materiais sem registro
@@ -128,6 +129,7 @@ def emprestimos_view(request):
                             )
                             raise ValueError(
                                 "Quantidade insuficiente para empréstimo.")
+
                         material.quantidade_disponivel -= quantidade
                         material.quantidade_emprestada += quantidade
 
