@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Visualizar Cliente{% endblock %}
+{% block navbar %}
+    {% if user.operador.nivel_acesso == 2 %}
+        {% include 'navbar_2.html' %}
+    {% elif user.operador.nivel_acesso == 1 %}
+        {% include 'navbar_1.html' %}
+    {% else %}
+        {% include 'navbar.html' %}
+    {% endif %}
+{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">Detalhes do Cliente</h1>
+    <div class="card p-3">
+        <div class="row">
+            <!-- Detalhes do Cliente -->
+            <div class="col-md-8">
+                <h5><strong>Nome:</strong> {{ cliente.nome }}</h5>
+                <p><strong>Identidade:</strong> {{ cliente.identidade }}</p>
+                <p><strong>CPF:</strong> {{ cliente.cpf|default:"Não informado" }}</p>
+                <p><strong>Organização Militar:</strong> {{ cliente.organizacao_militar|default:"Não informado" }}</p>
+                <p><strong>Status:</strong> 
+                    {% if cliente.isAtivo %}
+                        <span class="badge bg-success">Ativo</span>
+                    {% else %}
+                        <span class="badge bg-danger">Inativo</span>
+                    {% endif %}
+                </p>
+            </div>
+
+            <!-- Fotos do Cliente -->
+            <div class="col-md-4 text-center">
+                {% if cliente.foto %}
+                    <h5>Foto</h5>
+                    <img src="{{ cliente.foto.url }}" alt="Foto do Cliente" class="img-thumbnail mb-3" width="200">
+                {% else %}
+                    <p class="text-muted">Sem foto disponível</p>
+                {% endif %}
+                
+                {% if cliente.imagem_identidade %}
+                    <h5>Identidade</h5>
+                    <img src="{{ cliente.imagem_identidade.url }}" alt="Identidade" class="img-thumbnail mb-3" width="200">
+                {% else %}
+                    <p class="text-muted">Sem imagem de identidade disponível</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Botões de Ação no Final do Card -->
+        <div class="card-footer bg-white text-end mt-4">
+            <div class="d-flex justify-content-center gap-2">
+                <a href="{% url 'listar_clientes' %}" class="btn btn-outline-secondary">Voltar</a>
+                {% if user.operador.nivel_acesso == 3 %}
+                    <a href="{% url 'editar_cliente' cliente.id %}" class="btn btn-outline-warning">Editar</a>
+                    <form method="POST" action="{% url 'ativar_desativar_cliente' cliente.id %}" class="d-inline">
+                        {% csrf_token %}
+                        {% if cliente.isAtivo %}
+                            <button type="submit" class="btn btn-outline-danger">Desativar</button>
+                        {% else %}
+                            <button type="submit" class="btn btn-outline-success">Ativar</button>
+                        {% endif %}
+                    </form>
+                    <a href="{% url 'confirmar_exclusao_cliente' cliente.id %}" class="btn btn-outline-danger">Excluir</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

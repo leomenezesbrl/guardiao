@@ -1,0 +1,87 @@
+{% load static %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <!-- Logo -->
+        <a class="navbar-brand" href="/">
+            <img src="{% static 'images/logo.png' %}" alt="Logo Guardião" width="50" height="50" class="d-inline-block align-text-top">
+        </a>
+        
+        <!-- Nome Centralizado -->
+        <span class="navbar-brand navbar-brand-center">SISTEMA GUARDIÃO</span>
+        
+        <!-- Botão Toggle para Mobile -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Itens do Menu -->
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'listar_prontos' %}">Início</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="emprestimosDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Cautelas
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="emprestimosDropdown">
+                        <li><a class="dropdown-item" href="{% url 'listar_emprestimos' %}">Listar Cautelas</a></li>
+                        <li><a class="dropdown-item" href="{% url 'emprestimos' %}">Nova Cautela</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="casesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Cases
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="casesDropdown">
+                        <li><a class="dropdown-item" href="{% url 'listar_cases' %}">Listar Cases</a></li>
+                        <li><a class="dropdown-item" href="{% url 'cadastrar_case' %}">Cadastrar case</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="materiaisDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Materiais
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="materiaisDropdown">
+                        <li><a class="dropdown-item" href="{% url 'listar_materiais' %}">Listar Materiais</a></li>
+                        <li><a class="dropdown-item" href="{% url 'cadastrar_material' %}">Cadastrar Material</a></li>
+                        <li><a class="dropdown-item" href="{% url 'listar_categorias' %}">Listar Categorias</a></li>
+                        <li><a class="dropdown-item" href="{% url 'cadastrar_categoria' %}">Cadastrar Categoria</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="usuariosDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Usuários
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="usuariosDropdown">
+                        <li><a class="dropdown-item" href="{% url 'listar_clientes' %}">Listar Clientes</a></li>
+                        <li><a class="dropdown-item" href="{% url 'cadastrar_cliente' %}">Cadastrar Cliente</a></li>
+                        <li><a class="dropdown-item" href="{% url 'listar_operadores' %}">Listar Operadores</a></li>
+                        <li><a class="dropdown-item" href="{% url 'cadastrar_operador' %}">Cadastrar Operador</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'pronto_armamento' %}" class="btn btn-outline-warning me-2">Pronto do Armamento</a>
+                </li>
+            </ul>
+
+         
+
+            <!-- Login/Logout -->
+            <ul class="navbar-nav">
+                {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <span class="navbar-text text-light me-3">Olá, {{ user.operador.nome }}</span>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-outline-danger btn-sm" href="{% url 'logout' %}">Logout</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="btn btn-outline-success btn-sm" href="{% url 'login' %}">Login</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>

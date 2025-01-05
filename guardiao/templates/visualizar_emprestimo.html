@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% block title %}Visualizar Cautela{% endblock %}
+{% block navbar %}
+    {% if user.operador.nivel_acesso == 2 %}
+    {% include 'navbar_2.html' %}
+    {% elif user.operador.nivel_acesso == 1 %}
+    {% include 'navbar_1.html' %}
+    {% else %}
+    {% include 'navbar.html' %}
+    {% endif %}
+{% endblock %}
+{% block content %}
+
+<div class="container mt-5">
+    <h1 class="mb-4 text-center">Detalhes da Cautela</h1>
+    
+    <!-- Informações Gerais -->
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <h5 class="card-title">Informações Gerais</h5>
+        </div>
+        <div class="card-body">
+            <p><strong>Cliente:</strong> {{ emprestimo.cliente.nome }}</p>
+            <p><strong>Operador:</strong> {{ emprestimo.operador.user.username }}</p>
+            <p><strong>Destino:</strong> {{ emprestimo.destino }}</p>
+            <p><strong>Status:</strong> 
+                {% if emprestimo.isAtiva %}
+                    <span class="badge bg-success">Ativo</span>
+                {% else %}
+                    <span class="badge bg-danger">Inativo</span>
+                {% endif %}
+            </p>
+            <p><strong>Data da cautela:</strong> {{ emprestimo.data_emprestimo|date:"d/m/Y H:i" }}</p>
+            <p><strong>Data de devolução:</strong> {{ emprestimo.data_devolucao|date:"d/m/Y H:i" }}</p>
+        </div>
+    </div>
+
+    <!-- Materiais Emprestados -->
+    <h3 class="mt-5">Materiais Emprestados</h3>
+    <table class="table table-bordered mt-3">
+        <thead>
+            <tr>
+                <th>Nome do Material</th>
+                <th>Registro</th>
+                <th>Quantidade</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in materiais %}
+            <tr>
+                <td>{{ item.material.nome }}</td>
+                <td>{{ item.material.registro|default:"-" }}</td>
+                <td>{{ item.quantidade }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3" class="text-center">Nenhum material emprestado.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Histórico -->
+    <h3 class="mt-5">Histórico</h3>
+    <table class="table table-bordered mt-3">
+        <thead>
+            <tr>
+                <th>Data</th>
+                <th>Status</th>
+                <th>Operador</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for evento in historico %}
+            <tr>
+                <td>{{ evento.data|date:"d/m/Y H:i" }}</td>
+                <td>{{ evento.status }}</td>
+                <td>{{ evento.operador.user.username }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3" class="text-center">Nenhum histórico registrado.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Ações -->
+    <h3 class="mt-5">Ações</h3>
+<form method="POST" class="mt-3">
+    {% csrf_token %}
+    <div class="d-flex gap-2">
+        {% if emprestimo.isAtiva %}
+            <button name="acao" value="desativar" class="btn btn-warning">Desativar</button>
+        {% else %}
+            <button name="acao" value="reativar" class="btn btn-success">Reativar</button>
+        {% endif %}
+        <button name="acao" value="cancelar" class="btn btn-danger">Cancelar</button>
+    </div>
+</form>
+
+<div class="d-flex justify-content-center gap-2 mt-4 mb-4">
+    <a href="{% url 'listar_emprestimos' %}" class="btn btn-outline-secondary btn-lg">Voltar para Listagem</a>
+    {% if user.operador.nivel_acesso == 3 %}
+        <a href="{% url 'confirmar_exclusao_emprestimo' emprestimo.id %}" class="btn btn-outline-danger btn-lg">Excluir Cautela</a>
+    {% endif %}
+</div>
+
+</div>
+
+{% endblock %}

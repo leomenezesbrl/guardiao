@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %}Listar Operadores{% endblock %}
+{% block navbar %}
+    {% if user.operador.nivel_acesso == 2 %}
+    {% include 'navbar_2.html' %}
+    {% elif user.operador.nivel_acesso == 1 %}
+    {% include 'navbar_1.html' %}
+    {% else %}
+    {% include 'navbar.html' %}
+    {% endif %}
+{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <h1>Operadores Cadastrados</h1>
+    <a href="{% url 'cadastrar_operador' %}" class="btn btn-success mb-3">Cadastrar Novo Operador</a>
+    <table class="table table-bordered">
+        <thead>
+            <tr class="text-center">
+                <th>Nome</th>
+                <th>Identidade</th>
+                <th>Função</th>
+                <th>Nível de Acesso</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for operador in operadores %}
+            <tr>
+                <td><strong>{{ operador.nome }}</strong></td>
+                <td>{{ operador.identidade }}</td>
+                <td>{{ operador.funcao|default:"-" }}</td>
+                <td class="text-center">{{ operador.get_nivel_acesso_display }}</td>
+                <td class="text-center">
+                    <a href="{% url 'visualizar_operador' operador.id %}" class="btn btn-info btn-sm">Visualizar</a>
+                    <a href="{% url 'editar_operador' operador.id %}" class="btn btn-warning btn-sm">Editar</a>
+                    <a href="{% url 'excluir_operador' operador.id %}" class="btn btn-danger btn-sm">Excluir</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

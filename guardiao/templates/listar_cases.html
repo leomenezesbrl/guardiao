@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block title %}Listar Cases{% endblock %}
+{% block navbar %}
+    {% if user.operador.nivel_acesso == 2 %}
+    {% include 'navbar_2.html' %}
+    {% elif user.operador.nivel_acesso == 1 %}
+    {% include 'navbar_1.html' %}
+    {% else %}
+    {% include 'navbar.html' %}
+    {% endif %}
+{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">Cases</h1>
+    <form method="get" class="mb-3">
+        <input type="text" name="busca" placeholder="Buscar cases" class="form-control" value="{{ termo_busca }}">
+    </form>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Descrição</th>
+                <th>Responsável</th>
+                <th>Lacre</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for case in cases %}
+            <tr>
+                <td>{{ case.descricao }}</td>
+                <td>{{ case.responsavel }}</td>
+                <td>{{ case.lacre }}</td>
+                <td>
+                    <a href="{% url 'editar_case' case.id %}" class="btn btn-warning btn-sm">Editar</a>
+                    <a href="{% url 'excluir_case' case.id %}" class="btn btn-danger btn-sm">Excluir</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" class="text-center">Nenhum case encontrado.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{% url 'cadastrar_case' %}" class="btn btn-primary">Novo Case</a>
+</div>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}Editar Categoria{% endblock %}
+{% block navbar %}
+    {% if user.operador.nivel_acesso == 2 %}
+    {% include 'navbar_2.html' %}
+    {% elif user.operador.nivel_acesso == 1 %}
+    {% include 'navbar_1.html' %}
+    {% else %}
+    {% include 'navbar.html' %}
+    {% endif %}
+{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">Editar Categoria</h1>
+    <form method="POST">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="nome" class="form-label">Nome</label>
+            <input type="text" name="nome" id="nome" class="form-control" value="{{ categoria.nome }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="descricao" class="form-label">Descrição</label>
+            <textarea name="descricao" id="descricao" class="form-control">{{ categoria.descricao }}</textarea>
+        </div>
+        <button type="submit" class="btn btn-success">Salvar</button>
+        <a href="{% url 'listar_categorias' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

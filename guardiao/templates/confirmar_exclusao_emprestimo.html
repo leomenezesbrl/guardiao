@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %}Confirmar Exclusão de Cautela{% endblock %}
+{% block navbar %}
+    {% if user.operador.nivel_acesso == 2 %}
+        {% include 'navbar_2.html' %}
+    {% elif user.operador.nivel_acesso == 1 %}
+        {% include 'navbar_1.html' %}
+    {% else %}
+        {% include 'navbar.html' %}
+    {% endif %}
+{% endblock %}
+{% block content %}
+
+<div class="container mt-5">
+    <h1 class="mb-4 text-center">Confirmar Exclusão de Cautela</h1>
+    <div class="alert alert-danger text-center">
+        <p><strong>Tem certeza de que deseja excluir a cautela #{{ emprestimo.id }}?</strong></p>
+        <p><strong>Cliente:</strong> {{ emprestimo.cliente.nome }}</p>
+        <p><strong>Destino:</strong> {{ emprestimo.destino }}</p>
+        <p><strong>Data:</strong> {{ emprestimo.data_emprestimo|date:"d/m/Y H:i" }}</p>
+    </div>
+
+    <h4 class="mt-4">Materiais Emprestados</h4>
+    <ul class="list-group mb-4">
+        {% for item in materiais %}
+            <li class="list-group-item">
+                {{ item.material.nome }} 
+                {% if item.material.registro %} | Registro: {{ item.material.registro }}{% endif %}
+                | Quantidade: {{ item.quantidade }}
+            </li>
+        {% empty %}
+            <li class="list-group-item text-center">Nenhum material associado.</li>
+        {% endfor %}
+    </ul>
+
+    <form method="POST" action="{% url 'excluir_emprestimo' emprestimo.id %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Confirmar Exclusão</button>
+        <a href="{% url 'listar_emprestimos' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+
+{% endblock %}

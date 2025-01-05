@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block title %}{{ titulo }}{% endblock %}
+
+{% block navbar %}
+    {% if user.operador.nivel_acesso == 2 %}
+        {% include 'navbar_2.html' %}
+    {% elif user.operador.nivel_acesso == 1 %}
+        {% include 'navbar_1.html' %}
+    {% else %}
+        {% include 'navbar.html' %}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>{{ titulo }}</h1>
+    <table class="table table-bordered">
+        <thead>
+            <tr class="text-center">
+                <th>Número</th>
+                <th>Data</th>
+                <th>Lacre</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pronto in prontos %}
+                <tr>
+                    <td>{{ pronto.numero }}</td>
+                    <td>{{ pronto.data }}</td>
+                    <td>{{ pronto.lacre }}</td>
+                    <td class="text-center">
+                        <a href="{% url 'visualizar_pronto' pronto.id %}" class="btn btn-info btn-sm">Visualizar</a>
+                        {% if user.operador.nivel_acesso == 3 %}
+                        <a href="{% url 'excluir_pronto' pronto.id %}" class="btn btn-danger btn-sm"
+                           onclick="return confirm('Tem certeza que deseja excluir o Pronto Nº {{ pronto.numero }}?')">
+                            Excluir
+                        </a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{% url 'listar_prontos_anteriores' %}" class="btn btn-secondary mt-3">Prontos Anteriores</a>
+</div>
+{% endblock %}

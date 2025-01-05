@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}Editar Case{% endblock %}
+{% block navbar %}
+    {% if user.operador.nivel_acesso == 2 %}
+    {% include 'navbar_2.html' %}
+    {% elif user.operador.nivel_acesso == 1 %}
+    {% include 'navbar_1.html' %}
+    {% else %}
+    {% include 'navbar.html' %}
+    {% endif %}
+{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">Editar Case</h1>
+    <form method="POST">
+        {% csrf_token %}
+        <input type="text" name="descricao" value="{{ case.descricao }}" class="form-control mb-3" required>
+        <input type="text" name="responsavel" value="{{ case.responsavel }}" class="form-control mb-3" required>
+        <input type="text" name="lacre" value="{{ case.lacre }}" class="form-control mb-3" required>
+        <button type="submit" class="btn btn-success">Salvar</button>
+    </form>
+</div>
+{% endblock %}

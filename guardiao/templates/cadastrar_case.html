@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Cadastrar Case{% endblock %}
+{% block navbar %}
+    {% if user.operador.nivel_acesso == 2 %}
+    {% include 'navbar_2.html' %}
+    {% elif user.operador.nivel_acesso == 1 %}
+    {% include 'navbar_1.html' %}
+    {% else %}
+    {% include 'navbar.html' %}
+    {% endif %}
+{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">Cadastrar Case</h1>
+    <form method="POST">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="descricao" class="form-label">Descrição</label>
+            <input type="text" name="descricao" id="descricao" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label for="responsavel" class="form-label">Responsável</label>
+            <input type="text" name="responsavel" id="responsavel" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label for="lacre" class="form-label">Lacre</label>
+            <input type="text" name="lacre" id="lacre" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Cadastrar</button>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}Cadastrar Assinante{% endblock %}
+{% block navbar %}
+    {% if user.operador.nivel_acesso == 2 %}
+        {% include 'navbar_2.html' %}
+    {% elif user.operador.nivel_acesso == 1 %}
+        {% include 'navbar_1.html' %}
+    {% else %}
+        {% include 'navbar.html' %}
+    {% endif %}
+{% endblock %}
+{% block content %}
+<h1>Cadastrar Assinante</h1>
+<form method="POST">
+    {% csrf_token %}
+    <label for="nome">Nome:</label>
+    <input type="text" name="nome" class="form-control" required>
+    <button type="submit" class="btn btn-primary mt-2">Salvar</button>
+</form>
+{% endblock %}

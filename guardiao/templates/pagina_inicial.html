@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Página Inicial{% endblock %}
+{% block navbar %}
+    {% if user.operador.nivel_acesso == 2 %}
+        {% include 'navbar_2.html' %}
+    {% elif user.operador.nivel_acesso == 1 %}
+        {% include 'navbar_1.html' %}
+    {% else %}
+        {% include 'navbar.html' %}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container text-center mt-5">
+    <!-- Logo Centralizada -->
+    <div class="mb-4">
+        <img src="{% static 'images/logo.png' %}" alt="Logo Sistema Guardião" width="150" height="150" class="mb-3">
+        <h1 class="mb-5">Painel Principal</h1>
+    </div>
+
+    {% if user.operador.nivel_acesso == 3 %}
+    <!-- Nível 3: Acesso Total -->
+    <!-- Grupo: Cautelas -->
+    <div class="mb-5">
+        <h3 class="mb-3">Cautelas</h3>
+        <div class="row g-3">
+            <div class="col-md-3">
+                <a href="{% url 'emprestimos' %}" class="btn btn-primary w-100">Nova Cautela</a>
+            </div>
+            <div class="col-md-3">
+                <a href="{% url 'listar_emprestimos' %}" class="btn btn-primary w-100">Listar Cautelas</a>
+            </div>
+            <div class="col-md-3">
+                <a href="{% url 'pronto_armamento' %}" class="btn btn-primary w-100">Emitir Pronto</a>
+            </div>
+            <div class="col-md-3">
+                <a href="{% url 'listar_prontos' %}" class="btn btn-primary w-100">Listar Prontos</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Grupo: Cases -->
+    <div class="mb-5">
+        <h3 class="mb-3">Cases</h3>
+        <div class="row g-3">
+            <div class="col-md-6">
+                <a href="{% url 'listar_cases' %}" class="btn btn-secondary w-100">Listar Cases</a>
+            </div>
+            <div class="col-md-6">
+                <a href="{% url 'cadastrar_case' %}" class="btn btn-secondary w-100">Cadastrar Case</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Grupo: Materiais -->
+    <div class="mb-5">
+        <h3 class="mb-3">Materiais</h3>
+        <div class="row g-3">
+            <div class="col-md-3">
+                <a href="{% url 'listar_materiais' %}" class="btn btn-success w-100">Listar Materiais</a>
+            </div>
+            <div class="col-md-3">
+                <a href="{% url 'cadastrar_material' %}" class="btn btn-success w-100">Cadastrar Material</a>
+            </div>
+            <div class="col-md-3">
+                <a href="{% url 'listar_categorias' %}" class="btn btn-success w-100">Listar Categorias</a>
+            </div>
+            <div class="col-md-3">
+                <a href="{% url 'cadastrar_categoria' %}" class="btn btn-success w-100">Cadastrar Categoria</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Grupo: Operadores -->
+    <div class="mb-5">
+        <h3 class="mb-3">Operadores</h3>
+        <div class="row g-3">
+            <div class="col-md-3">
+                <a href="{% url 'listar_operadores' %}" class="btn btn-info w-100">Listar Operadores</a>
+            </div>
+            <div class="col-md-3">
+                <a href="{% url 'cadastrar_operador' %}" class="btn btn-info w-100">Cadastrar Operador</a>
+            </div>
+            <div class="col-md-3">
+                <a href="{% url 'listar_assinantes' %}" class="btn btn-info w-100">Listar Assinaturas</a>
+            </div>
+            <div class="col-md-3">
+                <a href="{% url 'listar_funcoes' %}" class="btn btn-info w-100">Listar Funções</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Grupo: Clientes -->
+    <div class="mb-5">
+        <h3 class="mb-3">Clientes</h3>
+        <div class="row g-3">
+            <div class="col-md-6">
+                <a href="{% url 'listar_clientes' %}" class="btn btn-warning w-100">Listar Clientes</a>
+            </div>
+            <div class="col-md-6">
+                <a href="{% url 'cadastrar_cliente' %}" class="btn btn-warning w-100">Cadastrar Cliente</a>
+            </div>
+        </div>
+    </div>
+    {% elif user.operador.nivel_acesso == 2 %}
+    <!-- Nível 2: Acesso Intermediário -->
+    <div class="mb-5">
+        <h3 class="mb-3">Operações Disponíveis</h3>
+        <div class="row g-3">
+            <div class="col-md-4"><a href="{% url 'emprestimos' %}" class="btn btn-primary w-100">Nova Cautela</a></div>
+            <div class="col-md-4"><a href="{% url 'listar_emprestimos' %}" class="btn btn-primary w-100">Listar Cautelas</a></div>
+            <div class="col-md-4"><a href="{% url 'listar_prontos' %}" class="btn btn-success w-100">Listar Prontos</a></div>
+            <div class="col-md-4"><a href="{% url 'pronto_armamento' %}" class="btn btn-success w-100">Emitir Pronto</a></div>
+            <div class="col-md-4"><a href="{% url 'listar_cases' %}" class="btn btn-info w-100">Listar Cases</a></div>
+            <div class="col-md-4"><a href="{% url 'cadastrar_case' %}" class="btn btn-info w-100">Cadastrar Case</a></div>
+            <div class="col"><a href="{% url 'listar_clientes' %}" class="btn btn-warning w-100">Listar Clientes</a></div>
+        </div>
+    </div>
+    {% else %}
+    <!-- Nível 1: Acesso Básico -->
+    <div class="mb-5">
+        <h3 class="mb-3">Operações Disponíveis</h3>
+        <div class="row g-3">
+            <div class="col-md-6"><a href="{% url 'pronto_armamento' %}" class="btn btn-primary w-100">Emitir Pronto</a></div>
+            <div class="col-md-6"><a href="{% url 'listar_prontos' %}" class="btn btn-primary w-100">Listar Prontos</a></div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

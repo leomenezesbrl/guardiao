@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% block title %}Pronto do Armamento{% endblock %}
+{% block navbar %}
+    {% if user.operador.nivel_acesso == 2 %}
+        {% include 'navbar_2.html' %}
+    {% elif user.operador.nivel_acesso == 1 %}
+        {% include 'navbar_1.html' %}
+    {% else %}
+        {% include 'navbar.html' %}
+    {% endif %}
+{% endblock %}
+{% block content %}
+
+<style>
+    .btn-outline-dark:hover {
+        background-color: black !important;
+        color: white !important;
+    }
+</style>
+
+<div class="container mt-5">
+    <h1 class="mb-4 text-center">Situação Atual</h1>
+    
+    <div class="d-flex gap-2 justify-content-center mb-4">
+        {% if user.operador.nivel_acesso == 3 or user.operador.nivel_acesso == 2 %}
+            <a href="{% url 'gerar_pronto' %}" class="btn btn-outline-dark btn-sm">Gerar Pronto</a>
+        {% endif %}
+        <a href="{% url 'listar_prontos' %}" class="btn btn-outline-dark btn-sm">Listar Prontos</a>
+    </div>
+
+    {% for categoria in categorias_materiais %}
+    <div class="mb-5">
+        <h3 class="text-primary">{{ categoria.categoria }}</h3>
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>Nome</th>
+                    <th>Existente</th>
+                    <th>Na Reserva</th>
+                    <th>Cautelados</th>
+                    <th>Destinos</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for material in categoria.materiais %}
+                <tr>
+                    <td>{{ material.nome }}</td>
+                    <td>{{ material.total_existente }}</td>
+                    <td>{{ material.total_na_reserva }}</td>
+                    <td>{{ material.total_emprestados }}</td>
+                    <td>
+                        {% if material.destinos %}
+                            {% for destino, quantidade in material.destinos.items %}
+                                ({{ quantidade }}) {{ destino }}{% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center">Nenhum material encontrado nesta categoria.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% empty %}
+    <p class="text-center">Nenhuma categoria encontrada.</p>
+    {% endfor %}
+
+    {% if cases %}
+    <div class="mb-5">
+        <h3 class="text-primary">Cases</h3>
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>Descrição</th>
+                    <th>Responsável</th>
+                    <th>Lacre</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for case in cases %}
+                <tr>
+                    <td>{{ case.descricao }}</td>
+                    <td>{{ case.responsavel }}</td>
+                    <td>{{ case.lacre }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}

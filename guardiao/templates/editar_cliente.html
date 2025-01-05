@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Editar Cliente{% endblock %}
+{% block navbar %}
+    {% if user.operador.nivel_acesso == 2 %}
+    {% include 'navbar_2.html' %}
+    {% elif user.operador.nivel_acesso == 1 %}
+    {% include 'navbar_1.html' %}
+    {% else %}
+    {% include 'navbar.html' %}
+    {% endif %}
+{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">Editar Cliente</h1>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="nome" class="form-label">Nome</label>
+            <input type="text" name="nome" class="form-control" value="{{ cliente.nome }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="identidade" class="form-label">Identidade</label>
+            <input type="text" name="identidade" class="form-control" value="{{ cliente.identidade }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="cpf" class="form-label">CPF</label>
+            <input type="text" name="cpf" class="form-control" value="{{ cliente.cpf }}">
+        </div>
+        <div class="mb-3">
+            <label for="organizacao_militar" class="form-label">Organização Militar</label>
+            <input type="text" name="organizacao_militar" class="form-control" value="{{ cliente.organizacao_militar }}">
+        </div>
+
+        <div class="mb-3">
+            <label for="foto" class="form-label">Foto do Cliente (Deixe vazio para manter atual)</label>
+            <input type="file" name="foto" class="form-control">
+            {% if cliente.foto %}
+                <p class="mt-2">Foto Atual:</p>
+                <img src="{{ cliente.foto.url }}" alt="Foto do Cliente" class="img-thumbnail" width="150">
+            {% endif %}
+        </div>
+
+        <div class="mb-3">
+            <label for="imagem_identidade" class="form-label">Imagem da Identidade (Deixe vazio para manter atual)</label>
+            <input type="file" name="imagem_identidade" class="form-control">
+            {% if cliente.imagem_identidade %}
+                <p class="mt-2">Imagem Atual:</p>
+                <img src="{{ cliente.imagem_identidade.url }}" alt="Imagem Identidade" class="img-thumbnail" width="150">
+            {% endif %}
+        </div>
+
+        <div class="mb-3 form-check">
+            <input type="checkbox" name="isAtivo" class="form-check-input" {% if cliente.isAtivo %}checked{% endif %}>
+            <label for="isAtivo" class="form-check-label">Ativo</label>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+        <a href="{% url 'listar_clientes' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

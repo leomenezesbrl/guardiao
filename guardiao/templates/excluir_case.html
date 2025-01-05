@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}Excluir Case{% endblock %}
+{% block navbar %}
+    {% if user.operador.nivel_acesso == 2 %}
+    {% include 'navbar_2.html' %}
+    {% elif user.operador.nivel_acesso == 1 %}
+    {% include 'navbar_1.html' %}
+    {% else %}
+    {% include 'navbar.html' %}
+    {% endif %}
+{% endblock %}
+{% block content %}
+<h1>Confirmar Exclusão</h1>
+<p>Tem certeza de que deseja excluir "{{ case.descricao }}"?</p>
+<form method="POST">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Excluir</button>
+    <a href="{% url 'listar_cases' %}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}

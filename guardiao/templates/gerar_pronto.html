@@ -1,0 +1,191 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Salvar Pronto do Armamento{% endblock %}
+{% block navbar %}
+    {% if user.operador.nivel_acesso == 2 %}
+    {% include 'navbar_2.html' %}
+    {% elif user.operador.nivel_acesso == 1 %}
+    {% include 'navbar_1.html' %}
+    {% else %}
+    {% include 'navbar.html' %}
+    {% endif %}
+{% endblock %}
+{% block content %}
+
+
+<div class="container mt-5">
+    <!-- Cabeçalho Personalizado -->
+    <div class="text-center mb-5">
+        <img src="{% static 'images/simbolo_repubica.png' %}" alt="Logo" width="100">
+        <h6>MINISTÉRIO DA DEFESA</h6>
+        <h6>COMANDO MILITAR DA AMAZÔNIA</h6>
+        <h6>3ª COMPANHIA DE FORÇAS ESPECIAIS</h6>
+        <h6>COMPANHIA GEN BDA THAUMATURGO SOTERO VAZ</h6>
+    </div>
+
+    <!-- Título da Página -->
+    <h4 class="text-center mb-4">Pronto do Armamento de {{ hoje }}</h4>
+
+    <form method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="html_conteudo" id="html_conteudo">
+        
+        <div id="conteudo_salvo">
+            <style>
+                .col-nome { width: 30%; }
+                .col-existente { width: 12%; }
+                .col-reserva { width: 12%; }
+                .col-cautelados { width: 12%; }
+                .col-destinos { width: 34%; }
+                .tabela-pequena {
+                    font-size: 13px; /* Reduz o tamanho da fonte */
+                }
+                .assinaturas-container {
+                    margin-top: 30px;
+                    display: flex;
+                    justify-content: center;
+                    flex-wrap: wrap;
+                    gap: 20px;
+                }
+                .assinatura-box {
+                    width: 250px;
+                    text-align: center;
+                }
+            </style>
+            {% for categoria in categorias_materiais %}
+            <div class="mb-5">
+                <h6 class="text-dark">{{ categoria.categoria }}</h6>
+                <div class="table-responsive">
+                    <table class="table table-hover table-bordered table-striped table-sm tabela-pequena">
+                        <thead class="table-dark">
+                            <tr class="text-center">
+                                <th class="col-nome">Nome</th>
+                                <th class="col-existente">Existente</th>
+                                <th class="col-reserva">Na Reserva</th>
+                                <th class="col-cautelados">Cautelados</th>
+                                <th class="col-destinos">Destinos</th>
+                            </tr>
+                        </thead>                        
+                        <tbody>
+                            {% for material in categoria.materiais %}
+                            <tr>
+                                <td>{{ material.nome }}</td>
+                                <td class='text-center'>{{ material.total_existente }}</td>
+                                <td class='text-center'>{{ material.total_na_reserva }}</td>
+                                <td class='text-center'>{{ material.total_emprestados }}</td>
+                                <td>
+                                    {% if material.destinos %}
+                                        {% for destino, quantidade in material.destinos.items %}
+                                            ({{ quantidade }}) {{ destino }}{% if not forloop.last %}, {% endif %}
+                                        {% endfor %}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="text-center">Nenhum material encontrado nesta categoria.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% empty %}
+            <p class="text-center">Nenhuma categoria encontrada.</p>
+            {% endfor %}
+
+            {% if cases %}
+            <div class="mb-5">
+                <h6 class="text-dark">Cases</h6>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped table-sm tabela-pequena">
+                        <thead class="table-dark text-center">
+                            <tr>
+                                <th>Descrição</th>
+                                <th>Responsável</th>
+                                <th>Lacre</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for case in cases %}
+                            <tr>
+                                <td>{{ case.descricao }}</td>
+                                <td>{{ case.responsavel }}</td>
+                                <td>{{ case.lacre }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Lacre Input -->
+        <div class="row justify-content-center my-4">
+            <div class="col-md-4">
+                <label for="lacre" class="form-label">Número do Lacre</label>
+                <input type="text" name="lacre" id="lacre" class="form-control text-center" placeholder="Digite o número do lacre" required>
+            </div>
+        </div>
+
+        <!-- Assinaturas e Funções -->
+        <div class="assinaturas-container">
+            <div class="assinatura-box">
+                <h6>Assinatura 1</h6>
+                <select id="assinante_1" name="assinante_1" class="form-select mb-2" required>
+                    {% for assinante in assinantes %}
+                        <option value="{{ assinante.id }}" {% if assinante.id == 4 %}selected{% endif %}>{{ assinante.nome }}</option>
+                    {% endfor %}
+                </select>
+                <select id="funcao_1" name="funcao_1" class="form-select" required>
+                    {% for funcao in funcoes %}
+                        <option value="{{ funcao.id }}" {% if funcao.id == 4 %}selected{% endif %}>{{ funcao.nome }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="assinatura-box">
+                <h6>Assinatura 2</h6>
+                <select id="assinante_2" name="assinante_2" class="form-select mb-2" required>
+                    {% for assinante in assinantes %}
+                        <option value="{{ assinante.id }}" {% if assinante.id == 3 %}selected{% endif %}>{{ assinante.nome }}</option>
+                    {% endfor %}
+                </select>
+                <select id="funcao_2" name="funcao_2" class="form-select" required>
+                    {% for funcao in funcoes %}
+                        <option value="{{ funcao.id }}" {% if funcao.id == 3 %}selected{% endif %}>{{ funcao.nome }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="assinatura-box">
+                <h6>Assinatura 3</h6>
+                <select id="assinante_3" name="assinante_3" class="form-select mb-2" required>
+                    {% for assinante in assinantes %}
+                        <option value="{{ assinante.id }}" {% if assinante.id == 2 %}selected{% endif %}>{{ assinante.nome }}</option>
+                    {% endfor %}
+                </select>
+                <select id="funcao_3" name="funcao_3" class="form-select" required>
+                    {% for funcao in funcoes %}
+                        <option value="{{ funcao.id }}" {% if funcao.id == 2 %}selected{% endif %}>{{ funcao.nome }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div class="text-center my-4">
+            <button type="submit" class="btn btn-success btn-lg">Salvar</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.querySelector('form').addEventListener('submit', function() {
+        document.getElementById('html_conteudo').value = document.getElementById('conteudo_salvo').outerHTML;
+    });
+</script>
+
+{% endblock %}

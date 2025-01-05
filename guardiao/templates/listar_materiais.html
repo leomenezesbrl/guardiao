@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% block title %}Listar Materiais{% endblock %}
+{% block navbar %}
+    {% if user.operador.nivel_acesso == 2 %}
+        {% include 'navbar_2.html' %}
+    {% elif user.operador.nivel_acesso == 1 %}
+        {% include 'navbar_1.html' %}
+    {% else %}
+        {% include 'navbar.html' %}
+    {% endif %}
+{% endblock %}
+{% block content %}
+
+<div class="container mt-5">
+    <!-- Botão Cadastrar Material para Nível 3 -->
+    {% if user.operador.nivel_acesso == 3 %}
+        <div class="d-flex justify-content-start mb-3">
+            <a href="{% url 'cadastrar_material' %}" class="btn btn-outline-primary btn-sm">
+                Cadastrar Material
+            </a>
+        </div>
+    {% endif %}
+
+    <h1 class="mb-4 text-center">Listar Materiais</h1>
+
+    <!-- Barra de Filtros e Busca -->
+    <form method="GET" class="row gx-2 gy-3 mb-4 align-items-center">
+        <div class="col-md-4">
+            <label for="categoria" class="form-label">Filtrar por Categoria</label>
+            <select name="categoria" id="categoria" class="form-select">
+                <option value="">Todas as Categorias</option>
+                {% for categoria in categorias %}
+                    <option value="{{ categoria.id }}" {% if categoria_selecionada == categoria.id|stringformat:"s" %}selected{% endif %}>
+                        {{ categoria.nome }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-6">
+            <label for="busca" class="form-label">Buscar Material</label>
+            <input type="text" name="busca" id="busca" class="form-control" placeholder="Digite o nome do material" value="{{ termo_busca }}">
+        </div>
+        <div class="col-md-2 d-flex align-items-end mt-auto">
+            <button type="submit" class="btn btn-primary w-100">Filtrar</button>
+        </div>
+    </form>
+
+    <!-- Exibição dos Materiais por Categoria -->
+    {% for categoria, materiais in materiais_por_categoria.items %}
+        <h3 class="text-primary mt-4">{{ categoria }}</h3>
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Nome</th>
+                    <th>Registro</th>
+                    <th>Quantidade</th>
+                    {% if user.operador.nivel_acesso == 3 %}
+                        <th>Ações</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for material in materiais %}
+                    <tr>
+                        <td>{{ material.nome }}</td>
+                        <td>
+                            {% if material.registro %}
+                                {{ material.registro }}
+                            {% else %}
+                                Não possui registro
+                            {% endif %}
+                        </td>
+                        <td>{{ material.quantidade_total }}</td>
+                        {% if user.operador.nivel_acesso == 3 %}
+                            <td>
+                                <a href="{% url 'editar_material' material.id %}" class="btn btn-sm btn-info">Editar</a>
+                                <a href="{% url 'excluir_material' material.id %}" class="btn btn-sm btn-danger" onclick="return confirm('Tem certeza que deseja excluir este material?')">Excluir</a>
+                            </td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% empty %}
+        <p class="text-center mt-4">Nenhum material encontrado.</p>
+    {% endfor %}
+</div>
+
+{% endblock %}

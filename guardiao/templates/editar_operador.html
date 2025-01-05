@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Editar Operador{% endblock %}
+{% block navbar %}
+    {% if user.operador.nivel_acesso == 2 %}
+    {% include 'navbar_2.html' %}
+    {% elif user.operador.nivel_acesso == 1 %}
+    {% include 'navbar_1.html' %}
+    {% else %}
+    {% include 'navbar.html' %}
+    {% endif %}
+{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">Editar Operador</h1>
+    <form method="POST">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="nome" class="form-label">Nome</label>
+            <input type="text" name="nome" class="form-control" value="{{ operador.nome }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="identidade" class="form-label">Identidade</label>
+            <input type="text" name="identidade" class="form-control" value="{{ operador.identidade }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="funcao" class="form-label">Função</label>
+            <input type="text" name="funcao" class="form-control" value="{{ operador.funcao }}">
+        </div>
+        <div class="mb-3">
+            <label for="nivel_acesso" class="form-label">Nível de Acesso</label>
+            <select name="nivel_acesso" class="form-control">
+                <option value="1" {% if operador.nivel_acesso == 1 %}selected{% endif %}>Nível 1</option>
+                <option value="2" {% if operador.nivel_acesso == 2 %}selected{% endif %}>Nível 2</option>
+                <option value="3" {% if operador.nivel_acesso == 3 %}selected{% endif %}>Nível 3</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+        <a href="{% url 'listar_operadores' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

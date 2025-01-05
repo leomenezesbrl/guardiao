@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Cadastrar Categoria{% endblock %}
+{% block navbar %}
+    {% if user.operador.nivel_acesso == 2 %}
+    {% include 'navbar_2.html' %}
+    {% elif user.operador.nivel_acesso == 1 %}
+    {% include 'navbar_1.html' %}
+    {% else %}
+    {% include 'navbar.html' %}
+    {% endif %}
+{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">Cadastrar Categoria</h1>
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+    <form method="POST">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="nome" class="form-label">Nome da Categoria</label>
+            <input type="text" name="nome" class="form-control" placeholder="Digite o nome da categoria" required>
+        </div>
+        <div class="mb-3">
+            <label for="descricao" class="form-label">Descrição</label>
+            <textarea name="descricao" class="form-control" placeholder="Descreva a categoria"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Cadastrar</button>
+        <a href="{% url 'listar_materiais' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

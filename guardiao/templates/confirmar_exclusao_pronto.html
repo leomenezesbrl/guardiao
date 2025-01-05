@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}Excluir Pronto {{ pronto.numero }}{% endblock %}
+{% block navbar %}
+    {% if user.operador.nivel_acesso == 2 %}
+    {% include 'navbar_2.html' %}
+    {% elif user.operador.nivel_acesso == 1 %}
+    {% include 'navbar_1.html' %}
+    {% else %}
+    {% include 'navbar.html' %}
+    {% endif %}
+{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4 text-center">Excluir Pronto do Armamento</h1>
+    <p class="text-center">
+        Tem certeza de que deseja excluir o <strong>Pronto Nº {{ pronto.numero }}</strong> de <strong>{{ pronto.data }}</strong>?
+    </p>
+    <form method="POST">
+        {% csrf_token %}
+        <div class="text-center mt-4">
+            <button type="submit" class="btn btn-danger">Sim, Excluir</button>
+            <a href="{% url 'listar_prontos' %}" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

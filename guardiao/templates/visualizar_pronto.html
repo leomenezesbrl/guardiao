@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Pronto do Armamento: {{ pronto.numero }}{% endblock %}
+
+{% block content %}
+
+<style>
+    /* Estilização geral para impressão */
+    @media print {
+        @page {
+            size: A4 portrait; /* Modo retrato */
+            margin: 5mm; /* Margem mínima */
+        }
+
+        body {
+            font-size: 12px;
+            line-height: 1.2;
+        }
+
+        /* Oculta elementos desnecessários na impressão */
+        .btn, .navbar {
+            display: none !important;
+        }
+
+        /* Garante que a tabela use toda a largura */
+        .container {
+            max-width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid black !important;
+            padding: 3px;
+        }
+
+       /* Rodapé Personalizado */
+
+        /* Rodapé da primeira página */
+        @page:first {
+            @bottom-right {
+                content: "Pronto do Armamento Nº {{ pronto.numero }} de {{ pronto.data }} - Página " counter(page) " de " counter(pages);
+                font-size: 10px;
+                text-align: right;
+            }
+        }
+
+        /* Rodapé das páginas seguintes */
+        @page {
+            @bottom-right {
+                content: "Continuação de Pronto do Armamento Nº {{ pronto.numero }} de {{ pronto.data }} - Página " counter(page) " de " counter(pages);
+                font-size: 10px;
+                text-align: right;
+            }
+        }
+
+        /* Cabeçalho personalizado na impressão */
+        @page {
+            @top-center {
+                content: "SISTEMA GUARDIÃO";
+                font-size: 11px;
+            }
+        }
+
+        /* Evita quebra entre data e assinaturas */
+        .no-break {
+            page-break-inside: avoid;
+        }
+    }
+
+    /* Estilo normal para visualização no navegador */
+    .assinatura-box {
+        text-align: center;
+        margin-top: 10px;
+    }
+
+    .assinatura-container {
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .assinatura-item {
+        flex: 1;
+        text-align: center;
+        padding: 5px;
+    }
+
+    /* Garante que data e assinaturas fiquem juntas */
+    .no-break {
+        margin-top: 30px;
+        margin-bottom: 30px;
+    }
+</style>
+
+<div class="container mt-5">
+    <!-- Cabeçalho Personalizado -->
+    <div class="text-center mb-3" style="font-size: 12px; line-height: 1.1;">
+        <img src="{% static 'images/simbolo_repubica.png' %}" alt="Logo" width="70" class="mb-1">
+        <p style="margin: 0; font-size: 12px;">MINISTÉRIO DA DEFESA</p>
+        <p style="margin: 0; font-size: 12px;">COMANDO MILITAR DA AMAZÔNIA</p>
+        <p style="margin: 0; font-size: 12px;">3ª COMPANHIA DE FORÇAS ESPECIAIS</p>
+        <p style="margin: 0; font-size: 10px;">(COMPANHIA GEN BDA THAUMATURGO SOTERO VAZ)</p>
+    </div>
+
+    <!-- Título da Página -->
+    <h6 class="text-center mb-4">Pronto do Armamento do dia {{ pronto.data }}</h6>
+    <hr>
+
+    <!-- Conteúdo Salvo (Renderizado como HTML) -->
+    <div>
+        {{ pronto.tabela|safe }}
+    </div>
+    <hr>
+
+    <h6 class="text-center">Lacre: {{ pronto.lacre }}</h6>
+    <hr>
+
+    <!-- Bloco de Data e Assinaturas (Mantidos Juntos) -->
+    <div class="no-break">
+        <div class="text-center mb-4">
+            <p><strong>Manaus - AM</strong>, {{ pronto.data }}</p>
+        </div>
+        <div class="assinatura-container">
+            <div class="assinatura-item">
+                <p>_____________________________________</p>
+                <p>{{ pronto.assinante_1 }}</p>
+                <p><strong>{{ pronto.funcao_1 }}</strong></p>
+            </div>
+            <div class="assinatura-item">
+                <p>_____________________________________</p>
+                <p>{{ pronto.assinante_2 }}</p>
+                <p><strong>{{ pronto.funcao_2 }}</strong></p>
+            </div>
+            <div class="assinatura-item">
+                <p>_____________________________________</p>
+                <p>{{ pronto.assinante_3 }}</p>
+                <p><strong>{{ pronto.funcao_3 }}</strong></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-4 mb-4">
+        <a href="{{ voltar_url }}" class="btn btn-outline-secondary btn-lg mx-2">Voltar</a>
+        <button onclick="window.print()" class="btn btn-outline-primary btn-lg mx-2">Imprimir</button>
+        {% if user.operador.nivel_acesso == 3 %}
+            <a href="{% url 'excluir_pronto' pronto.id %}" 
+               class="btn btn-outline-danger btn-lg mx-2"
+               onclick="return confirm('Tem certeza que deseja excluir o Pronto Nº {{ pronto.numero }}?')">
+                Excluir Pronto
+            </a>
+        {% endif %}
+    </div>    
+</div>
+
+{% endblock %}

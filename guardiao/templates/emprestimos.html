@@ -1,0 +1,274 @@
+{% extends 'base.html' %}
+{% block title %}Nova cautela{% endblock %}
+{% block navbar %}
+    {% if user.operador.nivel_acesso == 2 %}
+        {% include 'navbar_2.html' %}
+    {% elif user.operador.nivel_acesso == 1 %}
+        {% include 'navbar_1.html' %}
+    {% else %}
+        {% include 'navbar.html' %}
+    {% endif %}
+{% endblock %}
+{% block content %}
+
+<div class="container mt-5">
+    <h1 class="mb-4">Registrar Cautela</h1>
+    <form method="POST">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="buscar-cliente" class="form-label">Cliente</label>
+            <input type="text" id="buscar-cliente" class="form-control" placeholder="Digite o nome do cliente">
+            <input type="hidden" id="cliente-id" name="cliente">
+            <ul id="resultado-clientes" class="list-group mt-2"></ul>
+        </div>
+        <div class="mb-3">
+            <label for="data_devolucao" class="form-label">Data de Devolução</label>
+            <input type="date" id="data_devolucao" name="data_devolucao" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label for="destino" class="form-label">Destino</label>
+            <input type="text" id="destino" name="destino" class="form-control" required>
+        </div>
+
+        <h5>Adicionar Materiais</h5>
+        <div class="row g-3">
+            <div class="col-md-5">
+                <label for="material-dropdown" class="form-label">Material</label>
+                <select id="material-dropdown" class="form-control">
+                    <option value="">Selecione um material</option>
+                    {% for material in materiais %}
+                        <option value="{{ material.id }}">
+                            {{ material.nome }}
+                            {% if material.registro %}
+                                | Registro: {{ material.registro }}
+                            {% endif %}
+                            | Disponível: 
+                            {% if material.registro %}
+                                1
+                            {% else %}
+                                {{ material.quantidade_disponivel }}
+                            {% endif %}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="quantidade" class="form-label">Quantidade</label>
+                <input type="number" id="quantidade" class="form-control" min="1" value="1">
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="button" id="adicionar-material" class="btn btn-success">Adicionar</button>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalBuscarMaterial">Buscar</button>
+            </div>
+        </div>
+
+        <h5 class="mt-4">Materiais Selecionados</h5>
+        <table class="table table-bordered mt-2">
+            <thead>
+                <tr>
+                    <th>Material</th>
+                    <th>Quantidade</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="tabela-materiais">
+            </tbody>
+        </table>
+
+        <button type="submit" class="btn btn-primary mt-4">Registrar Empréstimo</button>
+    </form>
+</div>
+
+<!-- Modal de Busca de Materiais -->
+<div class="modal fade" id="modalBuscarMaterial" tabindex="-1" aria-labelledby="modalBuscarMaterialLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Buscar Material</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="buscar-material-nome" class="form-label">Buscar por Nome</label>
+                        <input type="text" id="buscar-material-nome" class="form-control" placeholder="Digite o nome do material">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="buscar-material-registro" class="form-label">Buscar por Registro</label>
+                        <input type="text" id="buscar-material-registro" class="form-control" placeholder="Digite o registro do material">
+                    </div>
+                </div>
+                <button class="btn btn-outline-primary mb-3 w-100" id="buscar-material-btn">Buscar</button>
+                <ul id="resultado-busca" class="list-group"></ul>
+            </div>
+            <div class="modal-footer">
+                <input type="number" id="modal-quantidade" class="form-control w-25" placeholder="Qtd" min="1" value="1">
+                <button type="button" id="modal-adicionar" class="btn btn-success">Incluir</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+     // 👉 Buscar Cliente com Autocomplete
+     document.getElementById('buscar-cliente').addEventListener('input', function () {
+        const termo = this.value.trim();
+        const resultadoClientes = document.getElementById('resultado-clientes');
+
+        if (termo.length < 2) {
+            resultadoClientes.innerHTML = '';
+            return;
+        }
+
+        fetch(`/buscar-clientes/?nome=${encodeURIComponent(termo)}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Erro HTTP: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                resultadoClientes.innerHTML = '';
+
+                if (data.length === 0) {
+                    resultadoClientes.innerHTML = '<li class="list-group-item text-center">Nenhum cliente encontrado</li>';
+                    return;
+                }
+
+                data.forEach(cliente => {
+                    const item = document.createElement('li');
+                    item.className = 'list-group-item list-group-item-action';
+                    item.textContent = cliente.nome;
+                    item.dataset.id = cliente.id;
+                    item.dataset.nome = cliente.nome;
+
+                    item.addEventListener('click', function () {
+                        document.getElementById('buscar-cliente').value = cliente.nome;
+                        document.getElementById('cliente-id').value = cliente.id;
+                        resultadoClientes.innerHTML = '';
+                    });
+
+                    resultadoClientes.appendChild(item);
+                });
+            })
+            .catch(error => {
+                console.error('Erro na busca de clientes:', error);
+                alert('Ocorreu um erro ao buscar clientes.');
+            });
+    });
+
+    // 👉 Fechar sugestões ao clicar fora
+    document.addEventListener('click', function (e) {
+        if (!e.target.closest('#buscar-cliente') && !e.target.closest('#resultado-clientes')) {
+            document.getElementById('resultado-clientes').innerHTML = '';
+        }
+    });
+    
+    // 👉 Adicionar material da dropdown
+    document.getElementById('adicionar-material').addEventListener('click', function () {
+        const materialDropdown = document.getElementById('material-dropdown');
+        const quantidade = document.getElementById('quantidade').value;
+
+        if (materialDropdown.value && quantidade > 0) {
+            const nomeMaterial = materialDropdown.options[materialDropdown.selectedIndex].text;
+            adicionarMaterialTabela(materialDropdown.value, nomeMaterial, quantidade);
+        } else {
+            alert('Selecione um material e informe uma quantidade válida.');
+        }
+    });
+
+    // 👉 Evento para buscar materiais pelo nome e registro
+    document.getElementById('buscar-material-btn').addEventListener('click', function () {
+        const termoNome = document.getElementById('buscar-material-nome').value.trim();
+        const termoRegistro = document.getElementById('buscar-material-registro').value.trim();
+
+        let url = `/buscar-materiais/?`;
+        if (termoNome) url += `nome=${encodeURIComponent(termoNome)}&`;
+        if (termoRegistro) url += `registro=${encodeURIComponent(termoRegistro)}`;
+
+        url = url.replace(/&$/, '');
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                const lista = document.getElementById('resultado-busca');
+                lista.innerHTML = '';
+
+                if (data.length === 0) {
+                    lista.innerHTML = '<li class="list-group-item text-center">Nenhum material encontrado</li>';
+                    return;
+                }
+
+                data.forEach(mat => {
+                    const item = document.createElement('li');
+                    item.className = 'list-group-item list-group-item-action';
+                    item.innerHTML = `<strong>${mat.nome}</strong><br>
+                                      <small>Registro: ${mat.registro} | Disponível: ${mat.quantidade_disponivel}</small>`;
+                    item.dataset.id = mat.id;
+                    item.dataset.nome = mat.nome;
+                    item.dataset.quantidade = mat.quantidade_disponivel;
+
+                    item.addEventListener('click', function () {
+                        document.querySelectorAll('#resultado-busca .list-group-item').forEach(el => el.classList.remove('active'));
+                        item.classList.add('active');
+
+                        // Atualizar informações do botão adicionar
+                        document.getElementById('modal-adicionar').dataset.id = mat.id;
+                        document.getElementById('modal-adicionar').dataset.nome = mat.nome;
+                        document.getElementById('modal-adicionar').dataset.quantidade = mat.quantidade_disponivel;
+                    });
+
+                    lista.appendChild(item);
+                });
+            })
+            .catch(error => {
+                console.error('Erro na busca:', error);
+                alert('Ocorreu um erro ao buscar materiais.');
+            });
+    });
+
+    // 👉 Adicionar material selecionado do modal
+    document.getElementById('modal-adicionar').addEventListener('click', function () {
+        const id = this.dataset.id;
+        const nome = this.dataset.nome;
+        const quantidade = document.getElementById('modal-quantidade').value;
+
+        if (id && quantidade > 0) {
+            adicionarMaterialTabela(id, nome, quantidade);
+            document.querySelector('.btn-close').click();
+        } else {
+            alert('Selecione um material válido e informe uma quantidade maior que zero.');
+        }
+    });
+
+    // 👉 Função para adicionar material na tabela
+    function adicionarMaterialTabela(id, nome, quantidade) {
+        const tabela = document.getElementById('tabela-materiais');
+        
+        // Verificar se material já está adicionado
+        const linhas = tabela.querySelectorAll('tr');
+        for (let linha of linhas) {
+            const celulaId = linha.querySelector('input[name="materiais"]');
+            if (celulaId && celulaId.value == id) {
+                alert('Este material já foi adicionado.');
+                return;
+            }
+        }
+
+        const row = tabela.insertRow();
+        row.innerHTML = `
+            <td>${nome}</td>
+            <td>${quantidade}</td>
+            <td>
+                <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('tr').remove()">Remover</button>
+            </td>
+            <input type="hidden" name="materiais" value="${id}">
+            <input type="hidden" name="quantidades" value="${quantidade}">
+        `;
+    }
+</script>
+
+
+{% endblock %}

@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% block title %}Listar cautelas{% endblock %}
+{% block navbar %}
+    {% if user.operador.nivel_acesso == 2 %}
+        {% include 'navbar_2.html' %}
+    {% elif user.operador.nivel_acesso == 1 %}
+        {% include 'navbar_1.html' %}
+    {% else %}
+        {% include 'navbar.html' %}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5">
+    <h1 class="mb-4 text-center">Listar Cautelas</h1>
+    
+    <!-- Filtros -->
+    <div class="mb-3 d-flex align-items-center justify-content-between">
+        <div>
+            <a href="?filtro=todos" class="btn btn-outline-primary {% if filtro == 'todos' %}active{% endif %}">Todos</a>
+            <a href="?filtro=ativas" class="btn btn-outline-success {% if filtro == 'ativas' %}active{% endif %}">Ativos</a>
+            <a href="?filtro=inativas" class="btn btn-outline-danger {% if filtro == 'inativas' %}active{% endif %}">Inativos</a>
+        </div>
+        <form method="GET" class="d-flex">
+            <input type="text" name="busca_cliente" class="form-control me-2" placeholder="Buscar por cliente" value="{{ busca_cliente }}">
+            <button type="submit" class="btn btn-outline-secondary">Buscar</button>
+        </form>
+    </div>
+    
+    <!-- Tabela de Cautelas -->
+    <table class="table table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Cliente</th>
+                <th>Operador</th>
+                <th>Destino</th>
+                <th>Status</th>
+                <th>Data da cautela</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for emprestimo in emprestimos %}
+            <tr>
+                <td>{{ emprestimo.cliente.nome }}</td>
+                <td>{{ emprestimo.operador.user.username }}</td>
+                <td>{{ emprestimo.destino }}</td>
+                <td>
+                    {% if emprestimo.isAtiva %}
+                        <span class="badge bg-success">Ativo</span>
+                    {% else %}
+                        <span class="badge bg-danger">Inativo</span>
+                    {% endif %}
+                </td>
+                <td>{{ emprestimo.data_emprestimo|date:"d/m/Y H:i" }}</td>
+                <td>
+                    <a href="{% url 'visualizar_emprestimo' emprestimo.id %}" class="btn btn-sm btn-primary">Visualizar</a>
+                    {% if user.operador.nivel_acesso == 3 %}
+                        <a href="{% url 'confirmar_exclusao_emprestimo' emprestimo.id %}" class="btn btn-sm btn-danger">Excluir</a>
+                    {% endif %}
+                </td>                
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="text-center">Nenhuma cautela encontrada.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}
