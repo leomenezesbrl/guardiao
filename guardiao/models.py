@@ -74,18 +74,10 @@ class Material(models.Model):
             self.quantidade_emprestada = total_emprestado
             self.quantidade_disponivel = self.quantidade_total - total_emprestado
 
-            print("\n===== ATUALIZAÇÃO DE QUANTIDADES =====")
-            print(f"Material: {self.nome}")
-            print(f"Quantidade Total: {self.quantidade_total}")
-            print(f"Quantidade Emprestada: {self.quantidade_emprestada}")
-            print(f"Quantidade Disponível: {self.quantidade_disponivel}")
-
             # Garantir que os valores não sejam negativos
             if self.quantidade_disponivel < 0:
-                print("⚠️ Ajustando quantidade disponível para 0.")
                 self.quantidade_disponivel = 0
             if self.quantidade_emprestada < 0:
-                print("⚠️ Ajustando quantidade emprestada para 0.")
                 self.quantidade_emprestada = 0
 
         self.save(update_fields=[
@@ -145,17 +137,10 @@ class Emprestimo(models.Model):
 # ✅ Pré-exclusão do Empréstimo
 @receiver(pre_delete, sender=Emprestimo)
 def atualizar_materiais_antes_exclusao(sender, instance, **kwargs):
-    print("\n===== INÍCIO DO pre_delete =====")
     sys.stdout.flush()
 
     for item in instance.emprestimomaterial_set.all():
         material = item.material
-        print(f"🛠️ Material: {material.nome}")
-        print(f"   Quantidade Emprestada (antes): {
-              material.quantidade_emprestada}")
-        print(f"   Quantidade Disponível (antes): {
-              material.quantidade_disponivel}")
-        print(f"   Quantidade Total: {material.quantidade_total}")
         sys.stdout.flush()
 
         if material.registro:
@@ -173,19 +158,13 @@ def atualizar_materiais_antes_exclusao(sender, instance, **kwargs):
             if material.quantidade_disponivel > material.quantidade_total:
                 material.quantidade_disponivel = material.quantidade_total
 
-        print(f"   Quantidade Emprestada (nova): {
-              material.quantidade_emprestada}")
-        print(f"   Quantidade Disponível (nova): {
-              material.quantidade_disponivel}")
         sys.stdout.flush()
 
         # Salva as mudanças nos materiais
         material.save(
             update_fields=['quantidade_disponivel', 'quantidade_emprestada'])
-        print(f"✅ Material '{material.nome}' atualizado com sucesso.")
         sys.stdout.flush()
 
-    print("===== FIM DO pre_delete =====\n")
     sys.stdout.flush()
 
 
