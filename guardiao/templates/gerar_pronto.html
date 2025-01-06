@@ -137,12 +137,12 @@
                 <h6>Assinatura 1</h6>
                 <select id="assinante_1" name="assinante_1" class="form-select mb-2" required>
                     {% for assinante in assinantes %}
-                        <option value="{{ assinante.id }}" {% if assinante.id == 4 %}selected{% endif %}>{{ assinante.nome }}</option>
+                        <option value="{{ assinante.id }}" {% if assinante.id == 3 %}selected{% endif %}>{{ assinante.nome }}</option>
                     {% endfor %}
                 </select>
                 <select id="funcao_1" name="funcao_1" class="form-select" required>
                     {% for funcao in funcoes %}
-                        <option value="{{ funcao.id }}" {% if funcao.id == 4 %}selected{% endif %}>{{ funcao.nome }}</option>
+                        <option value="{{ funcao.id }}" {% if funcao.id == 3 %}selected{% endif %}>{{ funcao.nome }}</option>
                     {% endfor %}
                 </select>
             </div>
@@ -151,12 +151,12 @@
                 <h6>Assinatura 2</h6>
                 <select id="assinante_2" name="assinante_2" class="form-select mb-2" required>
                     {% for assinante in assinantes %}
-                        <option value="{{ assinante.id }}" {% if assinante.id == 3 %}selected{% endif %}>{{ assinante.nome }}</option>
+                        <option value="{{ assinante.id }}" {% if assinante.id == 1 %}selected{% endif %}>{{ assinante.nome }}</option>
                     {% endfor %}
                 </select>
                 <select id="funcao_2" name="funcao_2" class="form-select" required>
                     {% for funcao in funcoes %}
-                        <option value="{{ funcao.id }}" {% if funcao.id == 3 %}selected{% endif %}>{{ funcao.nome }}</option>
+                        <option value="{{ funcao.id }}" {% if funcao.id == 2 %}selected{% endif %}>{{ funcao.nome }}</option>
                     {% endfor %}
                 </select>
             </div>
@@ -165,12 +165,12 @@
                 <h6>Assinatura 3</h6>
                 <select id="assinante_3" name="assinante_3" class="form-select mb-2" required>
                     {% for assinante in assinantes %}
-                        <option value="{{ assinante.id }}" {% if assinante.id == 2 %}selected{% endif %}>{{ assinante.nome }}</option>
+                        <option value="{{ assinante.id }}" {% if assinante.id == 1 %}selected{% endif %}>{{ assinante.nome }}</option>
                     {% endfor %}
                 </select>
                 <select id="funcao_3" name="funcao_3" class="form-select" required>
                     {% for funcao in funcoes %}
-                        <option value="{{ funcao.id }}" {% if funcao.id == 2 %}selected{% endif %}>{{ funcao.nome }}</option>
+                        <option value="{{ funcao.id }}" {% if funcao.id == 1 %}selected{% endif %}>{{ funcao.nome }}</option>
                     {% endfor %}
                 </select>
             </div>
