@@ -24,7 +24,7 @@ LOGOUT_REDIRECT_URL = 'login'
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
+'''
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
@@ -33,8 +33,15 @@ SECRET_KEY = 'django-insecure-c)mdv2zwp-k47b^)k$zyy%so^589019rk90^w%r8&r9g3uwa5#
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+'''
 
-ALLOWED_HOSTS = []
+from decouple import config
+
+SECRET_KEY = config('SECRET_KEY')
+DEBUG = config('DEBUG', default=False, cast=bool)
+
+
+ALLOWED_HOSTS = ['.onrender.com']
 
 
 # Application definition
@@ -92,18 +99,12 @@ DATABASES = {
     }
 }
 """
+import os
+import dj_database_url
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'guardiao_db',  # Nome do banco de dados
-        'USER': 'root',         # Usuário do MySQL
-        'PASSWORD': 'Virtue@9',  # Senha do MySQL
-        'HOST': 'localhost',    # Endereço do servidor MySQL
-        'PORT': '3306',         # Porta padrão do MySQL
-    }
+    'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -149,7 +150,6 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 STATIC_URL = '/static/'
-
 # Caminho absoluto para a pasta onde os arquivos estáticos serão coletados
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
