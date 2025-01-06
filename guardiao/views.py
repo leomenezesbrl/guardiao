@@ -44,7 +44,13 @@ import json
 import locale
 
 # Configuração Local
-locale.setlocale(locale.LC_TIME, 'ptb')
+import locale
+
+try:
+    locale.setlocale(locale.LC_TIME, 'pt_BR.UTF-8')
+except locale.Error:
+    locale.setlocale(locale.LC_TIME, 'C')  # Locale padrão (fallback)
+
 
 # ==============================
 # 📌 1. Autenticação e Sessão
