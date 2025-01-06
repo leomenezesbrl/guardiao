@@ -1,8 +1,22 @@
-
 import os
 from pathlib import Path
 from decouple import config
 import dj_database_url
+
+# =====================================
+# 🚀 CONFIGURAÇÕES BÁSICAS
+# =====================================
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+SECRET_KEY = config('SECRET_KEY', default='django-insecure-default-key')
+DEBUG = config('DEBUG', default=False, cast=bool)
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='.onrender.com').split(',')
+
+
+# =====================================
+# 🚀 LOGGING
+# =====================================
 
 LOGGING = {
     'version': 1,
@@ -14,37 +28,21 @@ LOGGING = {
     },
     'root': {
         'handlers': ['console'],
-        'level': 'DEBUG',
+        'level': 'DEBUG' if DEBUG else 'INFO',
     },
 }
 
+# =====================================
+# 🚀 AUTENTICAÇÃO
+# =====================================
 
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'listar_emprestimos'
 LOGOUT_REDIRECT_URL = 'login'
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
-
-'''
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-c)mdv2zwp-k47b^)k$zyy%so^589019rk90^w%r8&r9g3uwa5#'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-'''
-
-
-
-SECRET_KEY = os.getenv('SECRET_KEY')
-DEBUG = os.getenv('DEBUG', default=False) == 'True'
-ALLOWED_HOSTS = ['.onrender.com']
-
-
-# Application definition
+# =====================================
+# 🚀 APLICAÇÕES INSTALADAS
+# =====================================
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -56,8 +54,13 @@ INSTALLED_APPS = [
     'guardiao',
 ]
 
+# =====================================
+# 🚀 MIDDLEWARES
+# =====================================
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # WhiteNoise para arquivos estáticos
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -67,12 +70,22 @@ MIDDLEWARE = [
     'guardiao.middleware.NivelAcessoMiddleware',
 ]
 
+# =====================================
+# 🚀 URLS E WSGI
+# =====================================
+
 ROOT_URLCONF = 'projeto_guardiao.urls'
+
+WSGI_APPLICATION = 'projeto_guardiao.wsgi.application'
+
+# =====================================
+# 🚀 TEMPLATES
+# =====================================
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],  # Diretório de templates
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -85,27 +98,17 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'projeto_guardiao.wsgi.application'
-
-
-# Database
-# https://docs.djangoproject.com/en/5.0/ref/settings/#databases
-
-"""
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
-"""
+# =====================================
+# 🚀 BANCO DE DADOS
+# =====================================
 
 DATABASES = {
     'default': dj_database_url.config(default=config('DATABASE_URL'))
 }
 
-# Password validation
-# https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
+# =====================================
+# 🚀 VALIDAÇÃO DE SENHAS
+# =====================================
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -122,9 +125,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
-# Internationalization
-# https://docs.djangoproject.com/en/5.0/topics/i18n/
+# =====================================
+# 🚀 INTERNACIONALIZAÇÃO
+# =====================================
 
 LANGUAGE_CODE = 'pt-br'
 TIME_ZONE = 'America/Manaus'
@@ -132,32 +135,28 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.0/howto/static-files/
-
-STATIC_URL = 'static/'
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
-
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-# settings.py
-
+# =====================================
+# 🚀 ARQUIVOS ESTÁTICOS E MÍDIA
+# =====================================
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Para arquivos coletados
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),  # Diretório principal de arquivos estáticos
-]
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# WhiteNoise para servir estáticos em produção
+# =====================================
+# 🚀 PADRÃO PARA CHAVES PRIMÁRIAS
+# =====================================
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# =====================================
+# 🚀 CONFIGURAÇÕES PARA PRODUÇÃO
+# =====================================
+
 if os.environ.get('RENDER'):
     DEBUG = False
     ALLOWED_HOSTS = ['guardiao.onrender.com']
-    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-    MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
