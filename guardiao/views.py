@@ -307,8 +307,7 @@ def excluir_emprestimo(request, emprestimo_id):
     id = emprestimo.id
     if request.method == 'POST':
         emprestimo.delete()
-        messages.success(request, f"Cautela #{
-                         id} excluída com sucesso!")
+        messages.success(request, f"Cautela #{id} excluída com sucesso!")
         return redirect('listar_emprestimos')
 
     messages.error(request, "Operação inválida.")
