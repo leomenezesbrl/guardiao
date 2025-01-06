@@ -804,8 +804,7 @@ def gerar_pronto(request):
                 funcao_3=funcao_3,
                 tabela=conteudo_html,
             )
-            messages.success(request, f"Pronto Nº {
-                             numero} gerado com sucesso!")
+            messages.success(request, f"Pronto Nº {numero} gerado com sucesso!")
         except IntegrityError:
             messages.error(request, "Erro ao gerar pronto. Tente novamente.")
             return redirect('gerar_pronto')
@@ -890,8 +889,7 @@ def excluir_pronto(request, pronto_id):
     pronto = get_object_or_404(ProntoArmamento, id=pronto_id)
     if request.method == 'POST':
         pronto.delete()
-        messages.success(request, f"Pronto Nº {
-                         pronto.numero} excluído com sucesso!")
+        messages.success(request, f"Pronto Nº {pronto.numero} excluído com sucesso!")
         return redirect('listar_prontos')
     return render(request, 'confirmar_exclusao_pronto.html', {'pronto': pronto})
 
