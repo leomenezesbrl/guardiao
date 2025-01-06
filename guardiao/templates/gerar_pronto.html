@@ -151,7 +151,7 @@
                 <h6>Assinatura 2</h6>
                 <select id="assinante_2" name="assinante_2" class="form-select mb-2" required>
                     {% for assinante in assinantes %}
-                        <option value="{{ assinante.id }}" {% if assinante.id == 1 %}selected{% endif %}>{{ assinante.nome }}</option>
+                        <option value="{{ assinante.id }}" {% if assinante.id == 2 %}selected{% endif %}>{{ assinante.nome }}</option>
                     {% endfor %}
                 </select>
                 <select id="funcao_2" name="funcao_2" class="form-select" required>
