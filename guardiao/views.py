@@ -111,11 +111,9 @@ def emprestimos_view(request):
                         ).exists():
                             messages.error(
                                 request,
-                                f"O material '{material.nome}' com registro '{
-                                    material.registro}' já está emprestado."
+                                f"O material '{material.nome}' com registro '{material.registro}' já está emprestado."
                             )
-                            raise ValueError(
-                                "Material com registro único já emprestado.")
+                            raise ValueError("Material com registro único já emprestado.")
 
                         material.quantidade_disponivel = 0
 
@@ -124,11 +122,9 @@ def emprestimos_view(request):
                         if material.quantidade_disponivel < quantidade:
                             messages.error(
                                 request,
-                                f"O material '{
-                                    material.nome}' não possui quantidade suficiente disponível."
+                                f"O material '{material.nome}' não possui quantidade suficiente disponível."
                             )
-                            raise ValueError(
-                                "Quantidade insuficiente para empréstimo.")
+                            raise ValueError("Quantidade insuficiente para empréstimo.")
 
                         material.quantidade_disponivel -= quantidade
                         material.quantidade_emprestada += quantidade
