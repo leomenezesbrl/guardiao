@@ -34,3 +34,6 @@ def debug_view(request):
 urlpatterns += [
     path('debug/', debug_view),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
