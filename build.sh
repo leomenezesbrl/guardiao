@@ -16,6 +16,7 @@ python manage.py makemigrations
 echo "🔄 Aplicando migrações..."
 python manage.py migrate --fake-initial
 
+'''
 # Cria superusuário automaticamente (se não existir)
 echo "👤 Criando superusuário padrão (se não existir)..."
 python manage.py shell <<EOF
@@ -32,5 +33,6 @@ if not User.objects.filter(username=username).exists():
 else:
     print("⚠️ Superusuário já existe.")
 EOF
+'''
 
 echo "✅ Build concluído com sucesso!"

@@ -83,21 +83,39 @@ class Material(models.Model):
         self.save(update_fields=[
                   'quantidade_disponivel', 'quantidade_emprestada'])
 
-    def save(self, *args, **kwargs):
-        """
-        Garante que as quantidades estejam corretas antes de salvar.
-        """
-        if self.registro:
-            self.quantidade_total = 1
-            self.quantidade_disponivel = 1 if not EmprestimoMaterial.objects.filter(
-                material=self, emprestimo__isAtiva=True).exists() else 0
-            self.quantidade_emprestada = 1 - self.quantidade_disponivel
-        else:
-            self.quantidade_disponivel = self.quantidade_total - self.quantidade_emprestada
-            if self.quantidade_disponivel < 0:
-                self.quantidade_disponivel = 0
+def save(self, *args, **kwargs):
+    """
+    Garante que as quantidades estejam corretas antes de salvar.
+    """
+    # Salva inicialmente para garantir que o objeto tenha um ID válido
+    is_new = self.pk is None  # Verifica se é um novo objeto
+    super().save(*args, **kwargs)  # Salva o objeto no banco de dados
+    
+    if self.registro:
+        # Para materiais com registro único
+        emprestado = EmprestimoMaterial.objects.filter(
+            material=self, emprestimo__isAtiva=True
+        ).exists()
+        self.quantidade_total = 1
+        self.quantidade_disponivel = 0 if emprestado else 1
+        self.quantidade_emprestada = 1 - self.quantidade_disponivel
+    else:
+        # Para materiais sem registro
+        total_emprestado = EmprestimoMaterial.objects.filter(
+            material=self, emprestimo__isAtiva=True
+        ).aggregate(total=Sum('quantidade'))['total'] or 0
+        self.quantidade_emprestada = total_emprestado
+        self.quantidade_disponivel = self.quantidade_total - total_emprestado
 
-        super().save(*args, **kwargs)
+        # Garantir que os valores não sejam negativos
+        if self.quantidade_disponivel < 0:
+            self.quantidade_disponivel = 0
+        if self.quantidade_emprestada < 0:
+            self.quantidade_emprestada = 0
+
+    # Salva novamente após atualizar os valores relacionados
+    super().save(update_fields=['quantidade_total', 'quantidade_disponivel', 'quantidade_emprestada'])
+
 
     def __str__(self):
         if self.registro:
