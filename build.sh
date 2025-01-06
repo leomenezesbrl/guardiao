@@ -16,23 +16,23 @@ python manage.py makemigrations
 echo "🔄 Aplicando migrações..."
 python manage.py migrate --fake-initial
 
-'''
+
 # Cria superusuário automaticamente (se não existir)
-echo "👤 Criando superusuário padrão (se não existir)..."
-python manage.py shell <<EOF
-from django.contrib.auth import get_user_model
-User = get_user_model()
+#echo "👤 Criando superusuário padrão (se não existir)..."
+#python manage.py shell <<EOF
+#from django.contrib.auth import get_user_model
+#User = get_user_model()
 
-username = 'admin'
-email = 'admin@example.com'
-password = 'admin123'
+#username = 'admin'
+#email = 'admin@example.com'
+#password = 'admin123'
 
-if not User.objects.filter(username=username).exists():
-    User.objects.create_superuser(username=username, email=email, password=password)
-    print("✅ Superusuário criado com sucesso.")
-else:
-    print("⚠️ Superusuário já existe.")
-EOF
-'''
+#if not User.objects.filter(username=username).exists():
+#    User.objects.create_superuser(username=username, email=email, password=password)
+#    print("✅ Superusuário criado com sucesso.")
+#else:
+#    print("⚠️ Superusuário já existe.")
+#EOF
+
 
 echo "✅ Build concluído com sucesso!"
