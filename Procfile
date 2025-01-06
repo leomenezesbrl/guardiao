@@ -1,1 +1,1 @@
-web: gunicorn guardiao.wsgi:application
+web: gunicorn projeto_guardiao.wsgi.application
