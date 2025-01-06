@@ -10,8 +10,11 @@ pip install -r requirements.txt
 echo "📦 Coletando arquivos estáticos..."
 python manage.py collectstatic --no-input
 
+echo "🔄 Criando migrações..."
+python manage.py makemigrations
+
 echo "🔄 Aplicando migrações..."
-python manage.py migrate --no-input
+python manage.py migrate --fake-initial
 
 # Cria superusuário automaticamente (se não existir)
 echo "👤 Criando superusuário padrão (se não existir)..."
