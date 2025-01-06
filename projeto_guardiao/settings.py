@@ -101,7 +101,7 @@ DATABASES = {
 """
 
 DATABASES = {
-    'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))
+    'default': dj_database_url.config(default=config('DATABASE_URL'))
 }
 
 # Password validation
@@ -143,15 +143,21 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# settings.py
 
 
-# Caminho dos arquivos estáticos
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Para arquivos coletados
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
+    os.path.join(BASE_DIR, 'static'),  # Diretório principal de arquivos estáticos
 ]
 
-# Caminho dos arquivos de mídia (se você tiver uploads)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# WhiteNoise para servir estáticos em produção
+if os.environ.get('RENDER'):
+    DEBUG = False
+    ALLOWED_HOSTS = ['guardiao.onrender.com']
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+    MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
