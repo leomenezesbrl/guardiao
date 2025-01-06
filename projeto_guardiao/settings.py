@@ -1,6 +1,8 @@
 
 import os
 from pathlib import Path
+from decouple import config
+import dj_database_url
 
 LOGGING = {
     'version': 1,
@@ -35,12 +37,10 @@ SECRET_KEY = 'django-insecure-c)mdv2zwp-k47b^)k$zyy%so^589019rk90^w%r8&r9g3uwa5#
 DEBUG = True
 '''
 
-from decouple import config
-
-SECRET_KEY = config('SECRET_KEY')
-DEBUG = config('DEBUG', default=False, cast=bool)
 
 
+SECRET_KEY = os.getenv('SECRET_KEY')
+DEBUG = os.getenv('DEBUG', default=False) == 'True'
 ALLOWED_HOSTS = ['.onrender.com']
 
 
@@ -99,8 +99,6 @@ DATABASES = {
     }
 }
 """
-import os
-import dj_database_url
 
 DATABASES = {
     'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))
